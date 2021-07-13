@@ -908,9 +908,17 @@
     "name": "solc",
     "version": "0.5.1+commit.c8a2cb62.Linux.g++"
   },
-  "networks": {},
+  "networks": {
+    "5777": {
+      "events": {},
+      "links": {},
+      "address": "0x9513863Ab533e8305B709b4F992048746610d8AE",
+      "transactionHash": "0x1cdf3fbf1455cd8625947287e9e3cc46cd2625ac66c85fadc20b77f3a6f38a2f"
+    }
+  },
   "schemaVersion": "3.4.1",
-  "updatedAt": "2021-07-13T19:49:43.380Z",
+  "updatedAt": "2021-07-13T22:19:56.183Z",
+  "networkType": "ethereum",
   "devdoc": {
     "methods": {}
   },

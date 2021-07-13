@@ -5060,9 +5060,62 @@
     "name": "solc",
     "version": "0.5.1+commit.c8a2cb62.Linux.g++"
   },
-  "networks": {},
+  "networks": {
+    "5777": {
+      "events": {
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        },
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "_owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "_spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "_value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x35b56F254619787d4ED9DF48dDB5EfAfe054716F",
+      "transactionHash": "0x1099bab2d8376667b4377e62a76a2c1e63e77c5113cbc12942d87f35e36ec0de"
+    }
+  },
   "schemaVersion": "3.4.1",
-  "updatedAt": "2021-07-13T19:49:43.362Z",
+  "updatedAt": "2021-07-13T22:19:56.160Z",
+  "networkType": "ethereum",
   "devdoc": {
     "methods": {}
   },
