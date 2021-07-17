@@ -34,25 +34,20 @@ function App() {
   const loadBlockchainData = async () => {
     try {
       const web3 = window.web3;
-
-      // get accounts
       const accounts = await web3.eth.getAccounts();
       setAccount({ ...account, account: accounts[0] });
-
       // retrieving daitoken with networkid from abi
       const networkId = await web3.eth.net.getId();
-
       // Load DaiToken
       const daiTokenData = DaiToken.networks[networkId];
+
       if (daiTokenData) {
         const daiToken = new web3.eth.Contract(
           DaiToken.abi,
           daiTokenData.address
         );
         setAccount({ ...account, daiToken: daiToken });
-        let daiTokenBalance = await daiToken.methods
-          .balanceOf(account.account)
-          .call();
+        let daiTokenBalance = await daiToken.methods.balanceOf(account.account);
         setAccount({ ...account, daiTokenBalance: daiTokenBalance.toString() });
       } else {
         window.alert("DaiToken contract not deployed to detected network.");
@@ -66,9 +61,9 @@ function App() {
           dappTokenData.address
         );
         setAccount({ ...account, dappToken: dappToken });
-        let dappTokenBalance = await dappToken.methods
-          .balanceOf(account.account)
-          .call();
+        let dappTokenBalance = await dappToken.methods.balanceOf(
+          account.account
+        );
         setAccount({
           ...account,
           dappTokenBalance: dappTokenBalance.toString(),
@@ -85,9 +80,9 @@ function App() {
           tokenFarmData.address
         );
         setAccount({ ...account, tokenFarm: tokenFarm });
-        let stakingBalance = await tokenFarm.methods
-          .stakingBalance(account.account)
-          .call();
+        let stakingBalance = await tokenFarm.methods.stakingBalance(
+          account.account
+        );
         setAccount({ ...account, stakingBalance: stakingBalance.toString() });
       } else {
         window.alert("TokenFarm contract not deployed to detected network.");
