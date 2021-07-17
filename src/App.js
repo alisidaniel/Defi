@@ -1,7 +1,108 @@
+import React, { useEffect } from "react";
 import logo from "./logo.svg";
+import Web3 from "web3";
 import "./App.css";
+import DaiToken from "./abis/DaiToken.json";
+import DappToken from "./abis/DappToken.json";
+import TokenFarm from "./abis/TokenFarm.json";
 
 function App() {
+  const [account, setAccount] = React.useState({
+    account: "0x0",
+    dappToken: {},
+    daiToken: {},
+    tokenFarm: {},
+    dappTokenBalance: "0",
+    daiTokenBalance: "0",
+    stakingBalance: "0",
+    loading: true,
+  });
+
+  const loadWeb3 = async () => {
+    if (window.ethereum) {
+      window.web3 = new Web3(window.ethereum);
+      await window.ethereum.enable();
+    } else if (window.web3) {
+      window.web3 = Web3(window.web3.currentProvider);
+    } else {
+      window.alert(
+        "Non=Etherum browser detected. You should consider trying MetaMask!"
+      );
+    }
+  };
+
+  const loadBlockchainData = async () => {
+    try {
+      const web3 = window.web3;
+
+      // get accounts
+      const accounts = await web3.eth.getAccounts();
+      setAccount({ ...account, account: accounts[0] });
+
+      // retrieving daitoken with networkid from abi
+      const networkId = await web3.eth.net.getId();
+
+      // Load DaiToken
+      const daiTokenData = DaiToken.networks[networkId];
+      if (daiTokenData) {
+        const daiToken = new web3.eth.Contract(
+          DaiToken.abi,
+          daiTokenData.address
+        );
+        setAccount({ ...account, daiToken: daiToken });
+        let daiTokenBalance = await daiToken.methods
+          .balanceOf(account.account)
+          .call();
+        setAccount({ ...account, daiTokenBalance: daiTokenBalance.toString() });
+      } else {
+        window.alert("DaiToken contract not deployed to detected network.");
+      }
+
+      // Load DappToken
+      const dappTokenData = DappToken.networks[networkId];
+      if (dappTokenData) {
+        const dappToken = new web3.eth.Contract(
+          DappToken.abi,
+          dappTokenData.address
+        );
+        setAccount({ ...account, dappToken: dappToken });
+        let dappTokenBalance = await dappToken.methods
+          .balanceOf(account.account)
+          .call();
+        setAccount({
+          ...account,
+          dappTokenBalance: dappTokenBalance.toString(),
+        });
+      } else {
+        window.alert("DappToken contract not deployed to detected network.");
+      }
+
+      // Load TokenFarm
+      const tokenFarmData = TokenFarm.networks[networkId];
+      if (tokenFarmData) {
+        const tokenFarm = new web3.eth.Contract(
+          TokenFarm.abi,
+          tokenFarmData.address
+        );
+        setAccount({ ...account, tokenFarm: tokenFarm });
+        let stakingBalance = await tokenFarm.methods
+          .stakingBalance(account.account)
+          .call();
+        setAccount({ ...account, stakingBalance: stakingBalance.toString() });
+      } else {
+        window.alert("TokenFarm contract not deployed to detected network.");
+      }
+
+      // setAccount({ ...account, loading: false });
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+
+  useEffect(() => {
+    loadWeb3();
+    loadBlockchainData();
+  }, []);
   return (
     <div className="App">
       <nav className="flex items-center justify-between flex-wrap bg-teal-500 p-6">
@@ -37,19 +138,10 @@ function App() {
               href="#responsive-header"
               className="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4"
             >
-              Tab 1
-            </a>
-            <a
-              href="#responsive-header"
-              className="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4"
-            >
-              Tab 2
-            </a>
-            <a
-              href="#responsive-header"
-              className="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white"
-            >
-              Tab 3
+              <span>
+                <b>Account: </b>
+              </span>
+              <span>{account.account}</span>
             </a>
           </div>
           <div>
