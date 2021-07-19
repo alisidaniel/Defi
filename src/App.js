@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "./logo.svg";
 import Web3 from "web3";
 import "./App.css";
@@ -7,7 +7,7 @@ import DappToken from "./abis/DappToken.json";
 import TokenFarm from "./abis/TokenFarm.json";
 
 function App() {
-  const [account, setAccount] = React.useState({
+  const [abi, setAccount] = useState({
     account: "0x0",
     dappToken: {},
     daiToken: {},
@@ -35,58 +35,51 @@ function App() {
     try {
       const web3 = window.web3;
       const accounts = await web3.eth.getAccounts();
-      setAccount({ ...account, account: accounts[0] });
+      const account = accounts[0];
       // retrieving daitoken with networkid from abi
       const networkId = await web3.eth.net.getId();
       // Load DaiToken
       const daiTokenData = DaiToken.networks[networkId];
-
+      let daiToken;
+      let daiTokenBalance;
       if (daiTokenData) {
-        const daiToken = new web3.eth.Contract(
-          DaiToken.abi,
-          daiTokenData.address
-        );
-        setAccount({ ...account, daiToken: daiToken });
-        let daiTokenBalance = await daiToken.methods.balanceOf(account.account);
-        setAccount({ ...account, daiTokenBalance: daiTokenBalance.toString() });
+        daiToken = new web3.eth.Contract(DaiToken.abi, daiTokenData.address);
+        daiTokenBalance = await daiToken.methods.balanceOf(abi.account);
       } else {
         window.alert("DaiToken contract not deployed to detected network.");
       }
 
-      // Load DappToken
+      // // Load DappToken
       const dappTokenData = DappToken.networks[networkId];
+      let dappToken;
+      let dappTokenBalance;
       if (dappTokenData) {
-        const dappToken = new web3.eth.Contract(
-          DappToken.abi,
-          dappTokenData.address
-        );
-        setAccount({ ...account, dappToken: dappToken });
-        let dappTokenBalance = await dappToken.methods.balanceOf(
-          account.account
-        );
-        setAccount({
-          ...account,
-          dappTokenBalance: dappTokenBalance.toString(),
-        });
+        dappToken = new web3.eth.Contract(DappToken.abi, dappTokenData.address);
+        dappTokenBalance = await dappToken.methods.balanceOf(abi.account);
       } else {
         window.alert("DappToken contract not deployed to detected network.");
       }
 
-      // Load TokenFarm
+      // // Load TokenFarm
       const tokenFarmData = TokenFarm.networks[networkId];
+      let tokenFarm;
+      let stakingBalance;
       if (tokenFarmData) {
-        const tokenFarm = new web3.eth.Contract(
-          TokenFarm.abi,
-          tokenFarmData.address
-        );
-        setAccount({ ...account, tokenFarm: tokenFarm });
-        let stakingBalance = await tokenFarm.methods.stakingBalance(
-          account.account
-        );
-        setAccount({ ...account, stakingBalance: stakingBalance.toString() });
+        tokenFarm = new web3.eth.Contract(TokenFarm.abi, tokenFarmData.address);
+        stakingBalance = await tokenFarm.methods.stakingBalance(abi.account);
       } else {
         window.alert("TokenFarm contract not deployed to detected network.");
       }
+      return {
+        account,
+        tokenFarm,
+        daiToken,
+        dappToken,
+        daiTokenBalance: daiTokenBalance.toString(),
+        dappTokenBalance: dappTokenBalance.toString(),
+        stakingBalance: stakingBalance.toString(),
+        loading: false,
+      };
     } catch (e) {
       console.log(e.message);
     }
@@ -95,12 +88,13 @@ function App() {
   useEffect(() => {
     loadWeb3();
     loadBlockchainData().then((res) => {
-      setAccount({ ...account, loading: false });
+      console.log("hello", res);
+      setAccount({ ...res });
     });
   }, []);
   return (
     <div className="App">
-      {account.loading ? (
+      {abi.loading ? (
         <div className="text-center text-black">
           <p>Loading ....</p>
         </div>
@@ -142,7 +136,7 @@ function App() {
                   <span>
                     <b>Account: </b>
                   </span>
-                  <span>{account.account}</span>
+                  <span>{abi.account}</span>
                 </a>
               </div>
               <div>
